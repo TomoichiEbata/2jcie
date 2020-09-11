@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    　　 <title>グラフ</title> 
+  </head>
+  
+  <!--
+      縦と横のスクロールバーを、同時に消す方法です。
+      <body STYLE="overflow: hidden;">
+	-->
+  
+  <body BGCOLOR="black" text="white"  STYLE="overflow: hidden;">
+    
+    <center>
+      <font size="5">騒音</font>
+    </center>
+    
+    <canvas id="myChart" width="100" height="45"></canvas>
+    <script type="text/javascript" src="moment.js"></script>
+    <script type="text/javascript" src="Chart.js"></script>
+    <script type="text/javascript" src="chartjs-plugin-streaming.js"></script>
+    
+    <script>
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var chart = new Chart(ctx, {
+          type: 'bar',
+				data: {
+					datasets: [{
+                        data: [],  // 1つめ
+                        borderColor: "rgba(255,0,0,1)",
+                        backgroundColor: "rgba(255,0,0,0.5)",
+                        borderWidth: 1,
+                        label: 'Noise',
+					}]
+				},
+				options: {
+					scales: {
+						xAxes: [{
+                            type: 'realtime',
+                            realtime: {
+                                duration: 300000, // 300000ミリ秒（5分）のデータを表示 (コメントアウトすると早く動く)
+                                onRefresh: function(chart) {
+                                    chart.data.datasets.forEach(function(dataset) {
+                                        dataset.data.push({
+                                            x: Date.now(),
+                                            //y: (((Math.random()-0.5)*2)+11) 
+                                            //y: rand1()
+                                            y: get_csv_data()   
+                                        });
+                                    });
+                                }
+                            }
+
+                        }],
+                        yAxes: [{
+					        ticks: {
+					        	//max: 100,
+					        	//min: 0
+        					}
+                        }]
+					}
+				}
+			});
+
+            function rand1(){
+			   var a =(((Math.random()-0.5)*5)+11) 
+			   return a
+            };
+
+            function csv2Array(str) {
+               var csvData = [];
+               var lines = str.split("\n");
+               for (var i = 0; i < lines.length; ++i) {
+                   var cells = lines[i].split(",");
+                   csvData.push(cells);
+               }
+               return csvData;
+            }
+
+	   function csv2Number(data) {
+                var Data0 = [];
+
+                   Data0.push(data[0][4])
+
+		   console.log(Number(Data0));
+     		   console.log("Pass 2");
+                //}
+		return Number(Data0);	   
+            }
+
+
+           function get_csv_data(){
+ 
+              var req = new XMLHttpRequest();
+              var filePath = 'data_test.csv';
+              console.log(filePath);
+              req.open("GET", filePath, true);
+
+	      req.onload = function() {
+                 data = csv2Array(req.responseText);
+
+		 console.log(data);
+		 console.log("Pass 1");
+				   
+                 a =  csv2Number(data);
+ 		 console.log(a);
+
+	      }
+
+	      req.send(null);					   
+              return a;
+
+            }
+
+	  </script>
+      </body>
+</html>

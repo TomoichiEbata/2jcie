@@ -1,0 +1,44 @@
+=================
+1. Makefileの改造
+=================
+
+gdbを使う為に、
+CFLAGS  = -Wall -Wextra -g
+
+としているが、もともとは、
+CFLAGS  = -Wall -Wextra
+
+となっている
+
+===========
+2. 起動条件
+===========
+
+■デバイスロックされていたら、これを実行する
+$ sudo rm /var/lock/LCK..ttyUSB5
+
+■プロセスが止まらなかったら、これを実行する
+$ ps -ef | grep 2jcie-bu01
+        6454  5272 21 18:40 pts/3    00:00:02 ./2jcie-bu01 /dev/ttyUSB5 1
+$ sudo kill -9 6454
+
+=======
+3. 起動
+=======
+
+// これは動く
+$ ./2jcie-bu01 /dev/ttyUSB5 0
+
+// これは動かない(バグみたい)
+$ ./2jcie-bu01 /dev/ttyUSB5 1
+
+=========
+4. その他
+=========
+
+in sensor_data.c
+
+#define LATEST_ADDR             (0x5022)  // Table71
+
+
+
